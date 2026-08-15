@@ -1,0 +1,9 @@
+.build/
+node_modules/
+.DS_Store
+*.xcodeproj
+*.xcworkspace
+*.dmg
+*.app/
+service-account.json
+GoogleService-Info.plist
