@@ -31,7 +31,7 @@ cat <<EOF > "$APP_DIR/Contents/Info.plist"
     <key>CFBundleExecutable</key>
     <string>Ivors</string>
     <key>CFBundleIconFile</key>
-    <string>AppIcon</string>
+    <string>AppIcon.icns</string>
     <key>CFBundleIconName</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
@@ -56,9 +56,13 @@ EOF
 
 chmod +x "$APP_DIR/Contents/MacOS/Ivors"
 
-# Apply ad-hoc signature with hardened runtime enabled
+# Set native Finder icon attribute on app bundle
+swift -e 'import Cocoa; if let img = NSImage(contentsOfFile: "/Users/mayank/Documents/ivors-website/public/ivors_logo.png") { NSWorkspace.shared.setIcon(img, forFile: "'"$APP_DIR"'", options: []) }' 2>/dev/null || true
+SetFile -a C "$APP_DIR" 2>/dev/null || true
+
+# Apply ad-hoc signature with hardened runtime enabled (MUST BE LAST!)
 echo "🔏 Applying Hardened Runtime code signature..."
-codesign --force --options runtime -s - "$APP_DIR" 2>/dev/null || true
+codesign --force --deep --options runtime -s - "$APP_DIR" 2>/dev/null || true
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$APP_DIR" 2>/dev/null || true
 
 echo "✅ Hardened App bundle created at $APP_DIR"
