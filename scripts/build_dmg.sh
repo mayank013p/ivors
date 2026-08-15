@@ -17,6 +17,13 @@ mkdir -p "$STAGING_DIR"
 # Copy Ivors.app to staging
 cp -R "$APP_DIR" "$STAGING_DIR/Ivors.app"
 
+# Attach Volume Icon so DMG installer shows custom logo in Finder & browser downloads
+if [ -f "$PROJECT_DIR/AppIcon.icns" ]; then
+    cp "$PROJECT_DIR/AppIcon.icns" "$STAGING_DIR/.VolumeIcon.icns"
+    SetFile -c icnC "$STAGING_DIR/.VolumeIcon.icns" 2>/dev/null || true
+    SetFile -a C "$STAGING_DIR" 2>/dev/null || true
+fi
+
 # Create symlink to /Applications for standard drag-and-drop macOS installer
 ln -s /Applications "$STAGING_DIR/Applications"
 
