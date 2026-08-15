@@ -23,6 +23,17 @@ echo "📂 Copying files to mounted volume ($MOUNT_DIR)..."
 cp -R "$APP_DIR" "$MOUNT_DIR/Ivors.app"
 ln -s /Applications "$MOUNT_DIR/Applications"
 
+# Add automated 1-click launcher script inside DMG
+cat <<EOF > "$MOUNT_DIR/Open Ivors.command"
+#!/bin/bash
+DIR="\$(cd "\$(dirname "\$0")" && pwd)"
+echo "🚀 Opening Ivors..."
+cp -R "\$DIR/Ivors.app" /Applications/Ivors.app 2>/dev/null || true
+xattr -cr /Applications/Ivors.app 2>/dev/null || true
+open /Applications/Ivors.app
+EOF
+chmod +x "$MOUNT_DIR/Open Ivors.command"
+
 # Copy custom background graphic
 if [ -f "$PROJECT_DIR/scripts/dmg_background.png" ]; then
     mkdir -p "$MOUNT_DIR/.background"
