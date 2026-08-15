@@ -23,9 +23,6 @@ echo "📂 Copying files to mounted volume ($MOUNT_DIR)..."
 cp -R "$APP_DIR" "$MOUNT_DIR/Ivors.app"
 ln -s /Applications "$MOUNT_DIR/Applications"
 
-# Set Native Finder Icon on Ivors.app inside mounted DMG volume
-swift -e 'import Cocoa; if let img = NSImage(contentsOfFile: "/Users/mayank/Documents/ivors-website/public/ivors_logo.png") { NSWorkspace.shared.setIcon(img, forFile: "'"$MOUNT_DIR"'/Ivors.app", options: []) }' 2>/dev/null || true
-
 # 3. Attach Custom Volume Icon on Mounted DMG Volume
 if [ -f "$PROJECT_DIR/AppIcon.icns" ]; then
     cp "$PROJECT_DIR/AppIcon.icns" "$MOUNT_DIR/.VolumeIcon.icns"
@@ -42,9 +39,6 @@ echo "🔏 Converting to compressed final DMG installer ($DMG_NAME)..."
 hdiutil convert "$TEMP_DMG" -format UDZO -imagekey zlib-level=9 -o "$DMG_PATH"
 
 rm -f "$TEMP_DMG"
-
-# Set Native Finder Icon directly onto the DMG file itself!
-swift -e 'import Cocoa; if let img = NSImage(contentsOfFile: "/Users/mayank/Documents/ivors-website/public/ivors_logo.png") { NSWorkspace.shared.setIcon(img, forFile: "'"$DMG_PATH"'", options: []) }' 2>/dev/null || true
 
 echo "✅ Gold Standard macOS Installer Created Successfully!"
 echo "📍 Location: $DMG_PATH"
