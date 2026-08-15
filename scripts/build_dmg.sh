@@ -5,39 +5,43 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP_DIR="$PROJECT_DIR/Ivors.app"
 DMG_NAME="Ivors-v1.4.0.dmg"
 DMG_PATH="$PROJECT_DIR/$DMG_NAME"
-STAGING_DIR="$PROJECT_DIR/.build/dmg_staging"
+TEMP_DMG="$PROJECT_DIR/.build/temp.dmg"
 
 echo "🚀 Building Ivors Release App Bundle..."
 bash "$PROJECT_DIR/scripts/build_app.sh"
 
-echo "💿 Preparing DMG Staging Area..."
-rm -rf "$STAGING_DIR"
-mkdir -p "$STAGING_DIR"
+echo "💿 Creating temporary read-write disk image..."
+rm -f "$TEMP_DMG" "$DMG_PATH"
 
-# Copy Ivors.app to staging
-cp -R "$APP_DIR" "$STAGING_DIR/Ivors.app"
+# 1. Create temporary read-write DMG (HFS+ for full icon attribute compatibility)
+hdiutil create -size 40m -fs HFS+ -volname "Ivors" -type UDIF "$TEMP_DMG"
 
-# Attach Volume Icon so DMG installer shows custom logo in Finder & browser downloads
+# 2. Mount temporary DMG
+MOUNT_DIR=$(hdiutil attach -readwrite -noverify -noautoopen "$TEMP_DMG" | grep '/Volumes/' | sed 's/.*\/Volumes\//\/Volumes\//')
+
+echo "📂 Copying files to mounted volume ($MOUNT_DIR)..."
+cp -R "$APP_DIR" "$MOUNT_DIR/Ivors.app"
+ln -s /Applications "$MOUNT_DIR/Applications"
+
+# Set Native Finder Icon on Ivors.app inside mounted DMG volume
+swift -e 'import Cocoa; if let img = NSImage(contentsOfFile: "/Users/mayank/Documents/ivors-website/public/ivors_logo.png") { NSWorkspace.shared.setIcon(img, forFile: "'"$MOUNT_DIR"'/Ivors.app", options: []) }' 2>/dev/null || true
+
+# 3. Attach Custom Volume Icon on Mounted DMG Volume
 if [ -f "$PROJECT_DIR/AppIcon.icns" ]; then
-    cp "$PROJECT_DIR/AppIcon.icns" "$STAGING_DIR/.VolumeIcon.icns"
-    SetFile -c icnC "$STAGING_DIR/.VolumeIcon.icns" 2>/dev/null || true
-    SetFile -a C "$STAGING_DIR" 2>/dev/null || true
+    cp "$PROJECT_DIR/AppIcon.icns" "$MOUNT_DIR/.VolumeIcon.icns"
+    SetFile -c icnC "$MOUNT_DIR/.VolumeIcon.icns" 2>/dev/null || true
+    SetFile -a C "$MOUNT_DIR" 2>/dev/null || true
 fi
 
-# Create symlink to /Applications for standard drag-and-drop macOS installer
-ln -s /Applications "$STAGING_DIR/Applications"
+# 4. Sync & Unmount
+sync
+hdiutil detach "$MOUNT_DIR"
 
-echo "🔏 Creating macOS .dmg Disk Image ($DMG_NAME)..."
-rm -f "$DMG_PATH"
+# 5. Convert temporary DMG to compressed read-only installer (UDZO)
+echo "🔏 Converting to compressed final DMG installer ($DMG_NAME)..."
+hdiutil convert "$TEMP_DMG" -format UDZO -imagekey zlib-level=9 -o "$DMG_PATH"
 
-hdiutil create \
-  -volname "Ivors Dynamic Island" \
-  -srcfolder "$STAGING_DIR" \
-  -ov \
-  -format UDZO \
-  "$DMG_PATH"
-
-rm -rf "$STAGING_DIR"
+rm -f "$TEMP_DMG"
 
 echo "✅ Gold Standard macOS Installer Created Successfully!"
 echo "📍 Location: $DMG_PATH"
