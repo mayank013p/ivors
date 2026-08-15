@@ -132,29 +132,57 @@ struct AccountSettingsTab: View {
 
     var body: some View {
         Form {
-            // 1. If Not Authenticated & No Pro License: Force Sign In / Register First
-            if !auth.isAuthenticated && !trial.isLicenseActivated {
-                Section("Step 1: Sign In or Register to Access Ivors") {
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "person.crop.circle.badge.plus")
-                                .font(.system(size: 28))
-                                .foregroundColor(SettingsManager.shared.accentColor)
+            if !trial.isPaywallEnabled {
+                // Free Edition Banner when paywall is disabled
+                Section("Ivors License & Edition") {
+                    HStack(spacing: 12) {
+                        Image(systemName: "gift.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundColor(SettingsManager.shared.accentColor)
 
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Account Required")
-                                    .font(.system(size: 13, weight: .bold))
-                                Text("Sign in or create a free account via Email OTP to unlock your 14-Day Free Trial.")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
-                            }
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Ivors Free & Open Edition")
+                                .font(.system(size: 13, weight: .bold))
+                            Text("All widgets, dynamic HUDs, and feature suites are 100% free & fully unlocked.")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
                         }
+                        Spacer()
                     }
                     .padding(.vertical, 4)
                 }
 
-                if !auth.otpSent {
-                    Section(header: Text("Sign In / Register with 6-Digit Email OTP")) {
+                // Cloud Sync Section (Optional)
+                if auth.isAuthenticated, let user = auth.currentUser {
+                    Section("Ivors Cloud Sync Profile") {
+                        HStack(spacing: 12) {
+                            Image(systemName: "person.crop.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundColor(SettingsManager.shared.accentColor)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(user.email)
+                                    .font(.system(size: 13, weight: .bold))
+                                Text("Cloud Sync: Active")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundColor(.green)
+                            }
+                            Spacer()
+                            Button(role: .destructive, action: {
+                                auth.signOut()
+                                email = ""
+                                otpCode = ""
+                            }) {
+                                Text("Sign Out")
+                                    .font(.system(size: 11))
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Paywall Enforced Mode (When isPaywallEnabled is set to true remotely)
+                if !auth.isAuthenticated && !trial.isLicenseActivated {
+                    Section("Sign In / Register with 6-Digit Email OTP") {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Enter your email address to receive a 6-digit verification code.")
                                 .font(.system(size: 11))
@@ -192,223 +220,16 @@ struct AccountSettingsTab: View {
                         }
                     }
                 } else {
-                    Section(header: Text("Enter Verification Code")) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Image(systemName: "envelope.badge.shield.half.filled")
-                                    .foregroundColor(SettingsManager.shared.accentColor)
-                                Text("Code sent to **\(auth.pendingEmail ?? email)**")
-                                    .font(.system(size: 12))
-                            }
-
-                            TextField("6-Digit OTP Code (e.g. 849201)", text: $otpCode)
-                                .textFieldStyle(.roundedBorder)
-                                .font(.system(size: 14, weight: .bold, design: .monospaced))
-
-                            if let error = auth.errorMessage {
-                                Text(error)
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.red)
-                            }
-
-                            HStack {
-                                Button(action: {
-                                    Task {
-                                        do {
-                                            try await auth.verifyOTP(code: otpCode)
-                                            await syncManager.pullSettingsFromCloud()
-                                        } catch {}
-                                    }
-                                }) {
-                                    HStack {
-                                        if auth.isLoading {
-                                            ProgressView().controlSize(.small)
-                                        } else {
-                                            Text("Verify Code & Start Trial")
-                                                .fontWeight(.bold)
-                                            Image(systemName: "checkmark.seal.fill")
-                                        }
-                                    }
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .tint(SettingsManager.shared.accentColor)
-                                .disabled(otpCode.count < 6 || auth.isLoading)
-
-                                Spacer()
-
-                                Button(action: {
-                                    auth.otpSent = false
-                                    otpCode = ""
-                                }) {
-                                    Text("Change Email")
-                                        .font(.system(size: 11))
-                                }
-                                .buttonStyle(.plain)
-                                .foregroundColor(.blue)
-                            }
-                        }
-                    }
-                }
-            } else {
-                // 2. Authenticated OR Pro License: Display Trial Status & Profile
-                Section("Subscription & Trial Status") {
-                    if trial.isLicenseActivated {
+                    Section("Subscription & License Status") {
                         HStack {
                             Image(systemName: "checkmark.seal.fill")
                                 .font(.system(size: 24))
-                                .foregroundColor(.orange)
+                                .foregroundColor(.green)
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Ivors Pro License Activated")
+                                Text(trial.isLicenseActivated ? "Ivors Pro License Activated" : "Trial Active (\(trial.daysRemaining) Days Left)")
                                     .font(.system(size: 13, weight: .bold))
-                                if let key = trial.activatedLicenseKey {
-                                    Text("Key: \(key)")
-                                        .font(.system(size: 10, design: .monospaced))
-                                        .foregroundColor(.secondary)
-                                }
                             }
                             Spacer()
-                            Button("Deactivate") {
-                                trial.clearLicense()
-                            }
-                            .buttonStyle(.borderless)
-                            .font(.system(size: 11))
-                            .foregroundColor(.red)
-                        }
-                        .padding(.vertical, 2)
-                    } else {
-                        VStack(alignment: .leading, spacing: 6) {
-                            HStack {
-                                Text("14-Day Free Trial")
-                                    .font(.system(size: 13, weight: .bold))
-                                Spacer()
-                                Text("\(trial.daysRemaining) Days Remaining")
-                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                    .foregroundColor(trial.daysRemaining > 3 ? .green : .orange)
-                            }
-
-                            GeometryReader { geo in
-                                ZStack(alignment: .leading) {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color.gray.opacity(0.2))
-                                        .frame(height: 6)
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(trial.daysRemaining > 3 ? Color.green : Color.orange)
-                                        .frame(width: geo.size.width * trial.trialProgressFraction, height: 6)
-                                }
-                            }
-                            .frame(height: 6)
-                        }
-                        .padding(.vertical, 4)
-                    }
-                }
-
-                // Profile Section
-                if auth.isAuthenticated, let user = auth.currentUser {
-                    Section("Ivors Account Profile") {
-                        HStack(spacing: 12) {
-                            Image(systemName: "person.crop.circle.fill")
-                                .font(.system(size: 36))
-                                .foregroundColor(SettingsManager.shared.accentColor)
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(user.email)
-                                    .font(.system(size: 14, weight: .bold))
-                                
-                                if trial.isLicenseActivated {
-                                    Text("Tier: Pro (Lifetime)")
-                                        .font(.system(size: 11, weight: .bold))
-                                        .foregroundColor(.green)
-                                } else if trial.isTrialActive {
-                                    Text("Tier: Free Trial (\(trial.daysRemaining) Days Left)")
-                                        .font(.system(size: 11, weight: .bold))
-                                        .foregroundColor(.orange)
-                                } else {
-                                    Text("Tier: Trial Expired")
-                                        .font(.system(size: 11, weight: .bold))
-                                        .foregroundColor(.red)
-                                }
-                            }
-                            Spacer()
-                            Button(role: .destructive, action: {
-                                auth.signOut()
-                                email = ""
-                                otpCode = ""
-                            }) {
-                                Text("Sign Out")
-                                    .font(.system(size: 11))
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 3. Purchase Pro License & Key Activation
-            if !trial.isLicenseActivated {
-                Section("Activate License Key") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "creditcard.circle.fill")
-                                .font(.system(size: 28))
-                                .foregroundColor(.orange)
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Purchase License Key")
-                                    .font(.system(size: 13, weight: .bold))
-                                Text("Pay securely via Razorpay webpage to receive your license key instantly.")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Spacer()
-
-                            Button(action: {
-                                if let url = URL(string: SettingsManager.shared.razorpayPaymentPageURL) {
-                                    NSWorkspace.shared.open(url)
-                                }
-                            }) {
-                                HStack(spacing: 4) {
-                                    Text("Buy on Razorpay")
-                                    Image(systemName: "arrow.up.right")
-                                }
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.orange)
-                        }
-                        .padding(.vertical, 2)
-
-                        Divider()
-
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Already completed payment? Enter your License Key below:")
-                                .font(.system(size: 11, weight: .medium))
-                                .foregroundColor(.secondary)
-
-                            HStack {
-                                TextField("IVORS-PRO-XXXX-YYYY-ZZZZ", text: $licenseKeyInput)
-                                    .textFieldStyle(.roundedBorder)
-                                    .font(.system(size: 12, design: .monospaced))
-
-                                Button("Activate Key") {
-                                    Task {
-                                        do {
-                                            try await auth.activateLicenseKey(key: licenseKeyInput)
-                                            licenseMessage = "License Activated Successfully!"
-                                            licenseKeyInput = ""
-                                        } catch {
-                                            licenseMessage = error.localizedDescription
-                                        }
-                                    }
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .tint(SettingsManager.shared.accentColor)
-                                .disabled(licenseKeyInput.count < 10)
-                            }
-
-                            if let msg = licenseMessage {
-                                Text(msg)
-                                    .font(.system(size: 11))
-                                    .foregroundColor(msg.contains("Successfully") ? .green : .red)
-                            }
                         }
                     }
                 }

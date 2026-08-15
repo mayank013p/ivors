@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivors — Dynamic Island for macOS</title>
+    <meta name="description" content="Ivors brings Apple's Dynamic Island to your Mac. 100% Free & Open Source. Dynamic media controls, HUD overlays, privacy monitors, and widgets.">
+    <style>
+        :root {
+            --bg-color: #050508;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --accent-orange: #ff9500;
+            --text-main: #ffffff;
+            --text-sub: #a1a1aa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 149, 0, 0.18) 0%, rgba(255, 45, 85, 0.08) 50%, transparent 70%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 680px;
+            width: 100%;
+        }
+
+        .island-preview {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 22px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            margin-bottom: 32px;
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #34c759;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            font-size: 1.15rem;
+            color: var(--text-sub);
+            margin-bottom: 36px;
+            line-height: 1.6;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            color: #000000;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 14px 28px;
+            border-radius: 99px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(255, 255, 255, 0.35);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 14px 24px;
+            border-radius: 99px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            text-align: left;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            margin-bottom: 6px;
+            color: #ffffff;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        .note {
+            margin-top: 32px;
+            font-size: 0.8rem;
+            color: #71717a;
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    <div class="container">
+        <div class="island-preview">
+            <span class="dot"></span>
+            <span style="font-weight: 600; font-size: 0.9rem;">Ivors Dynamic Island</span>
+            <span style="color: var(--text-sub); font-size: 0.85rem;">macOS 14+</span>
+        </div>
+
+        <h1>Dynamic Island for macOS</h1>
+        <p class="subtitle">
+            Seamlessly integrated with your MacBook hardware notch. Dynamic music controls, Bluetooth HUDs, Privacy Monitors, AirDrop stash, and feature suites. 100% Free & Open Source.
+        </p>
+
+        <div class="cta-group">
+            <a href="downloads/Ivors-v1.4.0.dmg" download class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.54c.64-.78 1.08-1.85.96-2.94-.93.04-2.07.62-2.74 1.4-.6.69-1.12 1.79-.98 2.86 1.04.08 2.12-.54 2.76-1.32z"/></svg>
+                Download for Mac (.dmg)
+            </a>
+            <a href="https://github.com/mayank013p/ivors" target="_blank" class="btn-secondary">
+                GitHub Repository
+            </a>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>notch 4-Position UI</h3>
+                <p>Seamlessly transitions from hidden notch to compact wings, action popups, and expanded dashboard.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Bluetooth & Volume Sync</h3>
+                <p>Instant real-time volume & brightness HUD overlays for AirPods, realme Buds, and internal speakers.</p>
+            </div>
+            <div class="feature-card">
+                <h3>100% Free & Open</h3>
+                <p>Zero paywalls, subscriptions, or login requirements. All widgets fully unlocked out of the box.</p>
+            </div>
+        </div>
+
+        <p class="note">
+            First launch note: Right-click <strong>Ivors.app</strong> and click <strong>Open</strong> if prompted by macOS Gatekeeper.
+        </p>
+    </div>
+</body>
+</html>

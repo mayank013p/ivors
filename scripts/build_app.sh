@@ -15,6 +15,9 @@ mkdir -p "$APP_DIR/Contents/MacOS"
 mkdir -p "$APP_DIR/Contents/Resources"
 
 cp "$BUILD_DIR/Ivors" "$APP_DIR/Contents/MacOS/Ivors"
+if [ -f "$PROJECT_DIR/AppIcon.icns" ]; then
+    cp "$PROJECT_DIR/AppIcon.icns" "$APP_DIR/Contents/Resources/AppIcon.icns"
+fi
 
 # Strip symbols from release executable to prevent reverse engineering
 echo "🛡️ Stripping symbols from binary..."
@@ -27,6 +30,8 @@ cat <<EOF > "$APP_DIR/Contents/Info.plist"
 <dict>
     <key>CFBundleExecutable</key>
     <string>Ivors</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
     <string>com.ivors.dynamicisland</string>
     <key>CFBundleName</key>
