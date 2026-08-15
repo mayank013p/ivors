@@ -31,7 +31,7 @@ cat <<EOF > "$APP_DIR/Contents/Info.plist"
     <key>CFBundleExecutable</key>
     <string>Ivors</string>
     <key>CFBundleIconFile</key>
-    <string>AppIcon.icns</string>
+    <string>AppIcon</string>
     <key>CFBundleIconName</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
