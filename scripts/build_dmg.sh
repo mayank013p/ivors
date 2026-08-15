@@ -23,6 +23,12 @@ echo "📂 Copying files to mounted volume ($MOUNT_DIR)..."
 cp -R "$APP_DIR" "$MOUNT_DIR/Ivors.app"
 ln -s /Applications "$MOUNT_DIR/Applications"
 
+# Copy custom background graphic
+if [ -f "$PROJECT_DIR/scripts/dmg_background.png" ]; then
+    mkdir -p "$MOUNT_DIR/.background"
+    cp "$PROJECT_DIR/scripts/dmg_background.png" "$MOUNT_DIR/.background/background.png"
+fi
+
 # 3. Attach Custom Volume Icon on Mounted DMG Volume
 if [ -f "$PROJECT_DIR/AppIcon.icns" ]; then
     cp "$PROJECT_DIR/AppIcon.icns" "$MOUNT_DIR/.VolumeIcon.icns"
