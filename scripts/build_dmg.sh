@@ -43,6 +43,9 @@ hdiutil convert "$TEMP_DMG" -format UDZO -imagekey zlib-level=9 -o "$DMG_PATH"
 
 rm -f "$TEMP_DMG"
 
+# Set Native Finder Icon directly onto the DMG file itself!
+swift -e 'import Cocoa; if let img = NSImage(contentsOfFile: "/Users/mayank/Documents/ivors-website/public/ivors_logo.png") { NSWorkspace.shared.setIcon(img, forFile: "'"$DMG_PATH"'", options: []) }' 2>/dev/null || true
+
 echo "✅ Gold Standard macOS Installer Created Successfully!"
 echo "📍 Location: $DMG_PATH"
 ls -lh "$DMG_PATH"
