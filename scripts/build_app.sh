@@ -35,9 +35,11 @@ cat <<EOF > "$APP_DIR/Contents/Info.plist"
     <key>CFBundleIconName</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.ivors.dynamicisland</string>
+    <string>com.mayank.ivors</string>
     <key>CFBundleName</key>
-    <string>Ivors Dynamic Island</string>
+    <string>Ivors</string>
+    <key>CFBundleDisplayName</key>
+    <string>Ivors</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
