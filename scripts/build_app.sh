@@ -31,6 +31,8 @@ cat <<EOF > "$APP_DIR/Contents/Info.plist"
     <key>CFBundleExecutable</key>
     <string>Ivors</string>
     <key>CFBundleIconFile</key>
+    <string>AppIcon.icns</string>
+    <key>CFBundleIconName</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
     <string>com.ivors.dynamicisland</string>
@@ -55,6 +57,7 @@ chmod +x "$APP_DIR/Contents/MacOS/Ivors"
 # Apply ad-hoc signature with hardened runtime enabled
 echo "🔏 Applying Hardened Runtime code signature..."
 codesign --force --options runtime -s - "$APP_DIR" 2>/dev/null || true
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$APP_DIR" 2>/dev/null || true
 
 echo "✅ Hardened App bundle created at $APP_DIR"
 
