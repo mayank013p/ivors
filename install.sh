@@ -18,7 +18,10 @@ unzip -q "$TMP_ZIP" -d "$INSTALL_DIR"
 rm -f "$TMP_ZIP"
 
 echo "🛡️ Removing quarantine flags for seamless execution..."
+killall Ivors 2>/dev/null || true
 xattr -cr "$APP_PATH" 2>/dev/null || true
 
 echo "✅ Ivors installed successfully! Launching now..."
-open "$APP_PATH"
+open -n "$APP_PATH"
+echo "✨ Ivors is now live underneath your MacBook camera notch!"
+echo "💡 Tip: Press ⌥ Option + Space anytime to toggle the floating island."
