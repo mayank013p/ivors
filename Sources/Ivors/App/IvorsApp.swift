@@ -47,19 +47,17 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             WindowManager.shared.setupPanel()
 
-            if !TrialManager.shared.hasFullAccess {
-                // If user has not signed in or trial expired, force open Sign In / Account window on launch!
-                self.openPreferences()
-            } else {
-                // Trigger Entrance Animation around Camera Notch on Application Startup!
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                    EventBus.shared.post(.customNotification(
-                        title: "Ivors Active",
-                        message: "Dynamic Island ready",
-                        icon: "sparkles",
-                        type: .info
-                    ))
-                }
+            // Always open Ivors Preferences window on launch for instant visual feedback!
+            self.openPreferences()
+
+            // Trigger Entrance Animation around Camera Notch on Application Startup!
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                EventBus.shared.post(.customNotification(
+                    title: "Ivors Active",
+                    message: "Dynamic Island ready",
+                    icon: "sparkles",
+                    type: .info
+                ))
             }
         }
 
