@@ -5,7 +5,7 @@ echo "🚀 Installing Ivors Dynamic Island..."
 
 INSTALL_DIR="/Applications"
 APP_PATH="$INSTALL_DIR/Ivors.app"
-ZIP_URL="https://raw.githubusercontent.com/mayank013p/ivors_web/main/public/downloads/Ivors-macOS.zip"
+ZIP_URL="https://raw.githubusercontent.com/mayank013p/ivors/main/Ivors-macOS.zip"
 
 TMP_ZIP="/tmp/Ivors-macOS.zip"
 
