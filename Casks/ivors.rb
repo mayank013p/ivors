@@ -7,8 +7,6 @@ cask "ivors" do
   desc "Dynamic Island & Notch Productivity HUD for macOS"
   homepage "https://github.com/mayank013p/ivors"
 
-  depends_on macos: ">= :sonoma"
-
   app "Ivors.app"
 
   postflight do
