@@ -130,11 +130,9 @@ public final class WindowManager: ObservableObject {
 
             let state = WidgetManager.shared.activeState
             let isDragTargeted = WidgetManager.shared.isDragTargeted
-            let isFileTab = (WidgetManager.shared.selectedTab == 2)
 
-            // Stay locked open ONLY when on File Stash tab (Tab 2) or actively dragging a file!
-            // All other tabs (Music, Focus, Clipboard, Notes, Settings) collapse normally on outside click/hover!
-            let shouldLockOpen = (isFileTab || isDragTargeted) && (state == .maximized)
+            // Only lock open while a drag operation is actively hovering over the island drop zone
+            let shouldLockOpen = isDragTargeted && (state == .maximized)
 
             if (state == .expanded || state == .maximized) && !shouldLockOpen {
                 let expandedBounds = panel.frame.insetBy(dx: -15, dy: -15)

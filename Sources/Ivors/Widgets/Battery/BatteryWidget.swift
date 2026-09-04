@@ -76,6 +76,18 @@ public final class BatteryWidget: DynamicIslandWidget, ObservableObject {
                         artwork: artwork
                     )
 
+                case .trackArtworkUpdated(let artwork):
+                    if self.isShowingPopup, let current = self.currentNotification, current.title == "Now Playing" {
+                        self.currentNotification = SystemNotificationItem(
+                            title: current.title,
+                            message: current.message,
+                            icon: current.icon,
+                            artwork: artwork,
+                            type: current.type,
+                            timestamp: current.timestamp
+                        )
+                    }
+
                 case .clipboardUpdated(let text):
                     let snippet = text.trimmingCharacters(in: .whitespacesAndNewlines)
                     let displaySnippet = snippet.count > 32 ? String(snippet.prefix(32)) + "..." : snippet

@@ -109,6 +109,7 @@ public final class MediaManager: ObservableObject {
 
     private var previousTrackTitle: String = ""
     private var isUserInitiatedTrackChange: Bool = false
+    private var artworkCache: [String: NSImage] = [:]
 
     @objc public func updateNowPlaying() {
         // 1. Try Spotify Direct AppleScript Query first if Spotify is active
@@ -141,12 +142,15 @@ public final class MediaManager: ObservableObject {
                             EventBus.shared.post(.trackChanged(title: title, artist: artist.isEmpty ? "System Media" : artist, artwork: artworkImage))
                         }
                         self.isUserInitiatedTrackChange = false
+                    } else if let newArt = artworkImage, self.currentTrack.artwork == nil && title == self.currentTrack.title {
+                        EventBus.shared.post(.trackArtworkUpdated(artwork: newArt))
                     }
+
                     self.currentTrack = MediaTrack(
                         title: title,
                         artist: artist.isEmpty ? "System Media" : artist,
                         album: album,
-                        artwork: artworkImage ?? self.currentTrack.artwork,
+                        artwork: artworkImage ?? (title == self.currentTrack.title ? self.currentTrack.artwork : nil),
                         isPlaying: rate > 0.0,
                         duration: max(duration, 1.0),
                         elapsedTime: elapsedTime,
@@ -199,21 +203,25 @@ public final class MediaManager: ObservableObject {
                     let duration = Double(parts[4]) ?? 1.0
                     let elapsedTime = Double(parts[5]) ?? 0.0
                     let artworkUrl = parts.count >= 7 ? parts[6] : ""
+                    let cachedImage = !artworkUrl.isEmpty ? self.artworkCache[artworkUrl] : nil
 
                     DispatchQueue.main.async {
                         let isNewTrack = (title != self.previousTrackTitle) && isPlaying
                         if isNewTrack {
                             self.previousTrackTitle = title
                             if !self.isUserInitiatedTrackChange {
-                                EventBus.shared.post(.trackChanged(title: title, artist: artist, artwork: self.currentTrack.artwork))
+                                EventBus.shared.post(.trackChanged(title: title, artist: artist, artwork: cachedImage))
                             }
                             self.isUserInitiatedTrackChange = false
+                        } else if let cached = cachedImage, self.currentTrack.artwork == nil && title == self.currentTrack.title {
+                            EventBus.shared.post(.trackArtworkUpdated(artwork: cached))
                         }
+
                         self.currentTrack = MediaTrack(
                             title: title,
                             artist: artist,
                             album: album,
-                            artwork: self.currentTrack.artwork,
+                            artwork: cachedImage ?? (title == self.currentTrack.title ? self.currentTrack.artwork : nil),
                             isPlaying: isPlaying,
                             duration: max(duration, 1.0),
                             elapsedTime: elapsedTime,
@@ -221,16 +229,22 @@ public final class MediaManager: ObservableObject {
                         )
                         EventBus.shared.post(.mediaStateChanged)
 
-                        // Asynchronously download Spotify album cover artwork image
-                        if !artworkUrl.isEmpty && artworkUrl != self.lastFetchedArtworkUrl, let url = URL(string: artworkUrl) {
-                            self.lastFetchedArtworkUrl = artworkUrl
-                            URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-                                guard let self = self, let data = data, let image = NSImage(data: data) else { return }
-                                DispatchQueue.main.async {
-                                    self.currentTrack.artwork = image
-                                    EventBus.shared.post(.mediaStateChanged)
-                                }
-                            }.resume()
+                        // Asynchronously download Spotify album cover artwork image if not cached
+                        if !artworkUrl.isEmpty && cachedImage == nil, let url = URL(string: artworkUrl) {
+                            if artworkUrl != self.lastFetchedArtworkUrl {
+                                self.lastFetchedArtworkUrl = artworkUrl
+                                URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+                                    guard let self = self, let data = data, let image = NSImage(data: data) else { return }
+                                    DispatchQueue.main.async {
+                                        self.artworkCache[artworkUrl] = image
+                                        if self.currentTrack.title == title {
+                                            self.currentTrack.artwork = image
+                                            EventBus.shared.post(.mediaStateChanged)
+                                            EventBus.shared.post(.trackArtworkUpdated(artwork: image))
+                                        }
+                                    }
+                                }.resume()
+                            }
                         }
                     }
                 }

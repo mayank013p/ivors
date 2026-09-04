@@ -34,6 +34,19 @@ open /Applications/Ivors.app
 EOF
 chmod +x "$MOUNT_DIR/Open Ivors.command"
 
+# Compile 1-Click GUI Installer Applet
+cat <<'APPLET' > /tmp/installer_script.applescript
+set dmgPath to POSIX path of (path to me)
+set parentDir to do shell script "dirname " & quoted form of dmgPath
+set appSource to parentDir & "/Ivors.app"
+do shell script "cp -R " & quoted form of appSource & " /Applications/Ivors.app 2>/dev/null || true; xattr -cr /Applications/Ivors.app 2>/dev/null || true; open /Applications/Ivors.app"
+APPLET
+osacompile -o "$MOUNT_DIR/Install & Launch Ivors.app" /tmp/installer_script.applescript 2>/dev/null || true
+rm -f /tmp/installer_script.applescript
+if [ -f "$PROJECT_DIR/AppIcon.icns" ]; then
+    cp "$PROJECT_DIR/AppIcon.icns" "$MOUNT_DIR/Install & Launch Ivors.app/Contents/Resources/applet.icns" 2>/dev/null || true
+fi
+
 # Copy custom background graphic
 if [ -f "$PROJECT_DIR/scripts/dmg_background.png" ]; then
     mkdir -p "$MOUNT_DIR/.background"

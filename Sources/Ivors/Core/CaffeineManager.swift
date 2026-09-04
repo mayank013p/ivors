@@ -8,7 +8,13 @@ public final class CaffeineManager: ObservableObject {
     @Published public var isCaffeineActive: Bool = false
     @Published public var selectedDurationMinutes: Int? = nil // nil = Indefinitely
     @Published public var remainingSeconds: Int = 0
-    @Published public var preventDisplaySleep: Bool = true
+    @Published public var preventDisplaySleep: Bool = true {
+        didSet {
+            if isCaffeineActive {
+                reapplyAssertion()
+            }
+        }
+    }
 
     private var assertionID: IOPMAssertionID = 0
     private var countdownTimer: Timer?
@@ -31,10 +37,11 @@ public final class CaffeineManager: ObservableObject {
 
     public var formattedRemainingTime: String {
         guard isCaffeineActive else { return "Sleep Allowed" }
-        guard selectedDurationMinutes != nil else { return "Active Indefinitely" }
+        let modeStr = preventDisplaySleep ? "Display On" : "System Only"
+        guard selectedDurationMinutes != nil else { return "Active Indefinitely (\(modeStr))" }
         let remMins = remainingSeconds / 60
         let remSecs = remainingSeconds % 60
-        return String(format: "Active (%d:%02d left)", remMins, remSecs)
+        return String(format: "Active: %d:%02d left (%@)", remMins, remSecs, modeStr)
     }
 
     public func toggleCaffeine(durationMinutes: Int? = nil) {
@@ -45,9 +52,13 @@ public final class CaffeineManager: ObservableObject {
         }
     }
 
+    public func togglePreventDisplaySleep() {
+        preventDisplaySleep.toggle()
+    }
+
     public func enableCaffeine(durationMinutes: Int? = nil) {
         disableCaffeine()
-        
+
         let assertionType = preventDisplaySleep ? 
             (kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString) : 
             (kIOPMAssertionTypeNoIdleSleep as CFString)
@@ -70,14 +81,33 @@ public final class CaffeineManager: ObservableObject {
                     self.remainingSeconds = 0
                 }
 
+                let displayStatus = self.preventDisplaySleep ? "Screen and system awake" : "System awake (screen may sleep)"
                 EventBus.shared.post(.customNotification(
                     title: "Caffeine Enabled ☕",
-                    message: durationMinutes != nil ? "Active for \(durationMinutes!) minutes" : "Mac will stay awake indefinitely",
+                    message: durationMinutes != nil ? "\(displayStatus) for \(durationMinutes!) minutes" : "\(displayStatus) indefinitely",
                     icon: "cup.and.saucer.fill",
                     type: .info
                 ))
             }
         }
+    }
+
+    private func reapplyAssertion() {
+        if assertionID != 0 {
+            IOPMAssertionRelease(assertionID)
+            assertionID = 0
+        }
+
+        let assertionType = preventDisplaySleep ? 
+            (kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString) : 
+            (kIOPMAssertionTypeNoIdleSleep as CFString)
+
+        _ = IOPMAssertionCreateWithName(
+            assertionType,
+            IOPMAssertionLevel(kIOPMAssertionLevelOn),
+            "Ivors Caffeine Keep Awake" as CFString,
+            &assertionID
+        )
     }
 
     private func startCountdown() {

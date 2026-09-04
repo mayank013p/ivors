@@ -25,6 +25,7 @@ public final class EventBus {
 public enum SystemEvent {
     case mediaStateChanged
     case trackChanged(title: String, artist: String, artwork: NSImage?)
+    case trackArtworkUpdated(artwork: NSImage)
     case batteryStateChanged(level: Int, isCharging: Bool)
     case bluetoothDeviceConnected(name: String)
     case bluetoothDeviceDisconnected(name: String)

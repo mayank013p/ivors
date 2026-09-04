@@ -1059,7 +1059,7 @@ struct MaximizedTheaterDashboardView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.06)))
         }
-        .padding(12)
+        .padding(14)
         .frame(width: 200)
         .frame(maxHeight: .infinity)
         .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.09)).overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 0.8)))
@@ -1069,7 +1069,7 @@ struct MaximizedTheaterDashboardView: View {
     private var tab0MusicContent: some View {
         let hasActiveTrack = !mediaManager.currentTrack.title.isEmpty && mediaManager.currentTrack.title != "No Track Selected" && mediaManager.currentTrack.title != "Not Playing"
         HStack(spacing: 12) {
-            // Card 1: Track Header, Synced Lyrics & Controls (Width: 350)
+            // Card 1: Track Header, Synced Lyrics & Controls (Width: 340)
             VStack(alignment: .leading, spacing: 10) {
                 if hasActiveTrack {
                     trackHeaderView
@@ -1080,7 +1080,7 @@ struct MaximizedTheaterDashboardView: View {
                 }
             }
             .padding(14)
-            .frame(width: 350)
+            .frame(width: 340)
             .frame(maxHeight: .infinity)
             .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.09)).overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 0.8)))
 
@@ -1128,7 +1128,7 @@ struct MaximizedTheaterDashboardView: View {
                 }
                 .padding(10)
                 .frame(maxWidth: .infinity)
-                .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.08)).overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.1), lineWidth: 0.8)))
+                .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.06)).overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.08), lineWidth: 0.8)))
 
                 // Card 2: Live Hardware Performance Telemetry
                 VStack(alignment: .leading, spacing: 6) {
@@ -1170,7 +1170,7 @@ struct MaximizedTheaterDashboardView: View {
                 }
                 .padding(10)
                 .frame(maxWidth: .infinity)
-                .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.08)).overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.1), lineWidth: 0.8)))
+                .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.06)).overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.08), lineWidth: 0.8)))
 
                 // Card 3: Live Focus Clock Status
                 VStack(alignment: .leading, spacing: 6) {
@@ -1209,7 +1209,7 @@ struct MaximizedTheaterDashboardView: View {
                 }
                 .padding(10)
                 .frame(maxWidth: .infinity)
-                .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.08)).overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.1), lineWidth: 0.8)))
+                .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.06)).overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.08), lineWidth: 0.8)))
 
                 // Card 4: Quick Action Controls
                 HStack(spacing: 6) {
@@ -1247,106 +1247,74 @@ struct MaximizedTheaterDashboardView: View {
                     }
                     .buttonStyle(.plain)
                 }
+
+                Spacer(minLength: 0)
             }
-            .frame(width: 190)
+            .padding(14)
+            .frame(width: 180)
+            .frame(maxHeight: .infinity)
+            .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.09)).overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 0.8)))
         }
     }
 
     @ViewBuilder
     private var pomodoroCardView: some View {
-        VStack(spacing: 10) {
-            HStack {
-                Image(systemName: "timer").foregroundColor(.orange).font(.system(size: 13, weight: .bold))
-                Text("Pomodoro Focus Session").font(.system(size: 13, weight: .bold)).foregroundColor(.white)
-                Spacer()
-                HStack(spacing: 4) {
-                    Text("Streak:").font(.system(size: 10, weight: .semibold)).foregroundColor(.white.opacity(0.6))
-                    Text("🔥 \(pomodoroManager.completedSessionsCount)").font(.system(size: 11, weight: .bold)).foregroundColor(.orange)
-                }
-            }
-
-            ZStack {
-                Circle().stroke(Color.white.opacity(0.1), lineWidth: 8)
-                Circle().trim(from: 0, to: CGFloat(pomodoroManager.progress)).stroke(LinearGradient(colors: [.orange, .yellow], startPoint: .topLeading, endPoint: .bottomTrailing), style: StrokeStyle(lineWidth: 8, lineCap: .round)).rotationEffect(.degrees(-90))
-                VStack(spacing: 2) {
-                    Text(pomodoroManager.formattedTime).font(.system(size: 28, weight: .bold, design: .monospaced)).foregroundColor(.white)
-                    Text(pomodoroManager.currentMode.rawValue).font(.system(size: 10, weight: .medium)).foregroundColor(.white.opacity(0.65))
-                    HStack(spacing: 8) {
-                        Button(action: { pomodoroManager.toggleTimer() }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: pomodoroManager.isRunning ? "pause.fill" : "play.fill")
-                                    .font(.system(size: 10, weight: .bold))
-                                Text(pomodoroManager.isRunning ? "Pause" : "Start")
-                                    .font(.system(size: 10, weight: .bold))
-                            }
-                            .foregroundColor(.black)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Capsule().fill(Color.orange))
-                        }.buttonStyle(.plain)
-
-                        Button(action: { pomodoroManager.resetTimer() }) {
-                            Image(systemName: "arrow.counterclockwise")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(.white.opacity(0.8))
-                                .padding(5)
-                                .background(Circle().fill(Color.white.opacity(0.12)))
-                        }.buttonStyle(.plain)
-                    }
-                    .padding(.top, 2)
-                }
-            }
-            .frame(width: 120, height: 120)
-
-            HStack(spacing: 8) {
-                Button(action: { pomodoroManager.setMode(.work) }) {
-                    Text("25m Focus")
-                        .font(.system(size: 9.5, weight: pomodoroManager.currentMode == .work ? .bold : .medium))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Capsule().fill(pomodoroManager.currentMode == .work ? Color.orange : Color.white.opacity(0.1)))
-                }.buttonStyle(.plain)
-
-                Button(action: { pomodoroManager.setMode(.shortBreak) }) {
-                    Text("5m Break")
-                        .font(.system(size: 9.5, weight: pomodoroManager.currentMode == .shortBreak ? .bold : .medium))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Capsule().fill(pomodoroManager.currentMode == .shortBreak ? Color.orange : Color.white.opacity(0.1)))
-                }.buttonStyle(.plain)
-
-                Button(action: { pomodoroManager.setMode(.longBreak) }) {
-                    Text("15m Long")
-                        .font(.system(size: 9.5, weight: pomodoroManager.currentMode == .longBreak ? .bold : .medium))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Capsule().fill(pomodoroManager.currentMode == .longBreak ? Color.orange : Color.white.opacity(0.1)))
-                }.buttonStyle(.plain)
-            }
-
-            // Daily Goal Progress Footer
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text("TODAY'S GOAL")
-                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.5))
-                    Spacer()
-                    Text("\(pomodoroManager.completedSessionsCount) / 4 Focus Sessions")
-                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+        VStack(spacing: 12) {
+            // Header Row: Dynamic Title & Sub-Tool Segmented Selector
+            HStack(spacing: 6) {
+                HStack(spacing: 5) {
+                    Image(systemName: pomodoroManager.selectedToolTab.icon)
                         .foregroundColor(.orange)
+                        .font(.system(size: 12, weight: .bold))
+                    Text(pomodoroManager.selectedToolTab == .pomodoro ? "Focus Studio" : (pomodoroManager.selectedToolTab == .timer ? "Timer" : "Stopwatch"))
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
                 }
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(Color.white.opacity(0.12))
-                        Capsule().fill(Color.orange).frame(width: max(4, geo.size.width * CGFloat(min(1.0, Double(pomodoroManager.completedSessionsCount) / 4.0))))
+
+                Spacer(minLength: 4)
+
+                // Tool Switcher (Pomodoro / Timer / Stopwatch)
+                HStack(spacing: 2) {
+                    ForEach(TimeToolTab.allCases, id: \.self) { tab in
+                        Button(action: {
+                            withAnimation(AnimationController.defaultSpring) {
+                                pomodoroManager.selectedToolTab = tab
+                            }
+                        }) {
+                            HStack(spacing: 3) {
+                                Image(systemName: tab.icon)
+                                    .font(.system(size: 8, weight: .bold))
+                                Text(tab.rawValue)
+                                    .font(.system(size: 8.5, weight: pomodoroManager.selectedToolTab == tab ? .bold : .medium))
+                                    .lineLimit(1)
+                                    .fixedSize(horizontal: true, vertical: false)
+                            }
+                            .foregroundColor(pomodoroManager.selectedToolTab == tab ? .black : .white.opacity(0.75))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3.5)
+                            .background(Capsule().fill(pomodoroManager.selectedToolTab == tab ? Color.orange : Color.clear))
+                        }
+                        .buttonStyle(.plain)
                     }
-                }.frame(height: 4)
+                }
+                .padding(2)
+                .background(Capsule().fill(Color.white.opacity(0.08)))
+                .fixedSize(horizontal: true, vertical: false)
             }
-            .padding(8)
-            .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.06)))
+
+            // Sub-Tool Interactive Content
+            Group {
+                switch pomodoroManager.selectedToolTab {
+                case .pomodoro:
+                    pomodoroFocusSubView
+                case .timer:
+                    countdownTimerSubView
+                case .stopwatch:
+                    stopwatchSubView
+                }
+            }
+            .frame(maxHeight: .infinity)
         }
         .padding(14)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -1354,57 +1322,426 @@ struct MaximizedTheaterDashboardView: View {
     }
 
     @ViewBuilder
-    private var caffeineCardView: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Image(systemName: "cup.and.saucer.fill").foregroundColor(.orange).font(.system(size: 13, weight: .bold))
-                Text("Mac Caffeine Keep Awake").font(.system(size: 13, weight: .bold)).foregroundColor(.white)
-                Spacer()
-                Text(caffeineManager.isCaffeineActive ? "☕ Active" : "😴 Off")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(caffeineManager.isCaffeineActive ? .orange : .white.opacity(0.4))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Capsule().fill(caffeineManager.isCaffeineActive ? Color.orange.opacity(0.2) : Color.white.opacity(0.08)))
+    private var pomodoroFocusSubView: some View {
+        VStack(spacing: 12) {
+            Spacer(minLength: 0)
+
+            // Large Circular Dial
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 9)
+                Circle()
+                    .trim(from: 0, to: CGFloat(pomodoroManager.progress))
+                    .stroke(
+                        LinearGradient(colors: [.orange, .yellow], startPoint: .topLeading, endPoint: .bottomTrailing),
+                        style: StrokeStyle(lineWidth: 9, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: pomodoroManager.progress)
+
+                VStack(spacing: 3) {
+                    Text(pomodoroManager.formattedTime)
+                        .font(.system(size: 32, weight: .heavy, design: .monospaced))
+                        .foregroundColor(.white)
+
+                    HStack(spacing: 4) {
+                        Image(systemName: pomodoroManager.currentMode.icon)
+                            .font(.system(size: 9.5))
+                            .foregroundColor(.orange)
+                        Text(pomodoroManager.currentMode.rawValue)
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.white.opacity(0.75))
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2.5)
+                    .background(Capsule().fill(Color.white.opacity(0.08)))
+
+                    HStack(spacing: 10) {
+                        Button(action: { pomodoroManager.toggleTimer() }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: pomodoroManager.isRunning ? "pause.fill" : "play.fill")
+                                    .font(.system(size: 10, weight: .bold))
+                                Text(pomodoroManager.isRunning ? "Pause" : "Start")
+                                    .font(.system(size: 10.5, weight: .bold))
+                            }
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 5)
+                            .background(Capsule().fill(Color.orange))
+                        }
+                        .buttonStyle(.plain)
+
+                        Button(action: { pomodoroManager.resetTimer() }) {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .padding(6)
+                                .background(Circle().fill(Color.white.opacity(0.12)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.top, 4)
+                }
+            }
+            .frame(width: 145, height: 145)
+
+            Spacer(minLength: 0)
+
+            // Mode Selector Pills
+            HStack(spacing: 6) {
+                ForEach(FocusMode.allCases, id: \.self) { mode in
+                    Button(action: { pomodoroManager.setMode(mode) }) {
+                        Text(mode == .work ? "25m Work" : (mode == .shortBreak ? "5m Break" : (mode == .longBreak ? "15m Long" : "45m Sprint")))
+                            .font(.system(size: 9, weight: pomodoroManager.currentMode == mode ? .bold : .medium))
+                            .foregroundColor(pomodoroManager.currentMode == mode ? .white : .white.opacity(0.7))
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 4.5)
+                            .background(Capsule().fill(pomodoroManager.currentMode == mode ? Color.orange : Color.white.opacity(0.08)))
+                    }
+                    .buttonStyle(.plain)
+                }
             }
 
-            Text(caffeineManager.formattedRemainingTime)
-                .font(.system(size: 10, weight: .medium))
-                .foregroundColor(.white.opacity(0.65))
+            // Session Info Footer
+            HStack(spacing: 8) {
+                Image(systemName: pomodoroManager.currentMode.icon)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.orange)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("FOCUS SESSION")
+                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.5))
+                    Text(pomodoroManager.isRunning ? "\(pomodoroManager.formattedTime) remaining" : "\(pomodoroManager.currentMode.rawValue) (\(pomodoroManager.currentMode.durationMinutes)m)")
+                        .font(.system(size: 9.5, weight: .semibold))
+                        .foregroundColor(.white)
+                }
+                Spacer()
+                Text("\(Int(pomodoroManager.progress * 100))%")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(.orange)
+            }
+            .padding(10)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
+        }
+    }
 
-            // Presets Selection
+    @ViewBuilder
+    private var countdownTimerSubView: some View {
+        VStack(spacing: 12) {
+            Spacer(minLength: 0)
+
+            // Large Circular Countdown Dial
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 9)
+                Circle()
+                    .trim(from: 0, to: CGFloat(pomodoroManager.customTimerProgress))
+                    .stroke(
+                        LinearGradient(colors: [.cyan, .blue], startPoint: .topLeading, endPoint: .bottomTrailing),
+                        style: StrokeStyle(lineWidth: 9, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: pomodoroManager.customTimerProgress)
+
+                VStack(spacing: 3) {
+                    Text(pomodoroManager.formattedCustomTimer)
+                        .font(.system(size: 32, weight: .heavy, design: .monospaced))
+                        .foregroundColor(.white)
+
+                    Text(pomodoroManager.isCustomTimerRunning ? "Countdown Running" : "Ready to Start")
+                        .font(.system(size: 9.5, weight: .semibold))
+                        .foregroundColor(.cyan)
+
+                    HStack(spacing: 8) {
+                        Button(action: { pomodoroManager.toggleCustomTimer() }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: pomodoroManager.isCustomTimerRunning ? "pause.fill" : "play.fill")
+                                    .font(.system(size: 10, weight: .bold))
+                                Text(pomodoroManager.isCustomTimerRunning ? "Pause" : "Start")
+                                    .font(.system(size: 10.5, weight: .bold))
+                            }
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 11)
+                            .padding(.vertical, 5)
+                            .background(Capsule().fill(Color.cyan))
+                        }
+                        .buttonStyle(.plain)
+
+                        Button(action: { pomodoroManager.addCustomTimerMinutes(1) }) {
+                            Text("+1m")
+                                .font(.system(size: 9.5, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 7)
+                                .padding(.vertical, 5)
+                                .background(Capsule().fill(Color.white.opacity(0.14)))
+                        }
+                        .buttonStyle(.plain)
+
+                        Button(action: { pomodoroManager.resetCustomTimer() }) {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .padding(6)
+                                .background(Circle().fill(Color.white.opacity(0.12)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.top, 4)
+                }
+            }
+            .frame(width: 145, height: 145)
+
+            Spacer(minLength: 0)
+
+            // Preset Capsules
+            VStack(spacing: 5) {
+                HStack(spacing: 5) {
+                    ForEach([1, 3, 5, 10], id: \.self) { mins in
+                        Button(action: { pomodoroManager.setCustomTimerDuration(mins * 60) }) {
+                            Text("\(mins)m")
+                                .font(.system(size: 9.5, weight: pomodoroManager.customTimerDuration == mins * 60 ? .bold : .medium))
+                                .foregroundColor(pomodoroManager.customTimerDuration == mins * 60 ? .black : .white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 4)
+                                .background(RoundedRectangle(cornerRadius: 7).fill(pomodoroManager.customTimerDuration == mins * 60 ? Color.cyan : Color.white.opacity(0.08)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                HStack(spacing: 5) {
+                    ForEach([15, 20, 30, 60], id: \.self) { mins in
+                        Button(action: { pomodoroManager.setCustomTimerDuration(mins * 60) }) {
+                            Text(mins >= 60 ? "1 Hr" : "\(mins)m")
+                                .font(.system(size: 9.5, weight: pomodoroManager.customTimerDuration == mins * 60 ? .bold : .medium))
+                                .foregroundColor(pomodoroManager.customTimerDuration == mins * 60 ? .black : .white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 4)
+                                .background(RoundedRectangle(cornerRadius: 7).fill(pomodoroManager.customTimerDuration == mins * 60 ? Color.cyan : Color.white.opacity(0.08)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            // Bottom Status Card
+            HStack(spacing: 8) {
+                Image(systemName: "hourglass.bottomhalf.filled")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.cyan)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("TIMER SCHEDULE")
+                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.5))
+                    Text(pomodoroManager.isCustomTimerRunning ? "\(pomodoroManager.customTimerRemaining / 60)m \(pomodoroManager.customTimerRemaining % 60)s left" : "Duration: \(pomodoroManager.customTimerDuration / 60) minutes")
+                        .font(.system(size: 9.5, weight: .semibold))
+                        .foregroundColor(.white)
+                }
+                Spacer()
+                Text("\(Int(pomodoroManager.customTimerProgress * 100))%")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(.cyan)
+            }
+            .padding(10)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
+        }
+    }
+
+    @ViewBuilder
+    private var stopwatchSubView: some View {
+        VStack(spacing: 10) {
+            // Dial
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 8)
+                Circle()
+                    .stroke(LinearGradient(colors: [.green, .mint], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 8)
+                    .rotationEffect(.degrees(-90))
+
+                VStack(spacing: 2) {
+                    Text(pomodoroManager.formattedStopwatchTime)
+                        .font(.system(size: 26, weight: .heavy, design: .monospaced))
+                        .foregroundColor(.white)
+
+                    Text(pomodoroManager.isStopwatchRunning ? "Measuring Elapsed Time" : (pomodoroManager.stopwatchElapsed > 0 ? "Paused" : "Ready"))
+                        .font(.system(size: 9.5, weight: .medium))
+                        .foregroundColor(.green)
+
+                    HStack(spacing: 8) {
+                        Button(action: { pomodoroManager.toggleStopwatch() }) {
+                            HStack(spacing: 3) {
+                                Image(systemName: pomodoroManager.isStopwatchRunning ? "pause.fill" : "play.fill")
+                                    .font(.system(size: 9.5, weight: .bold))
+                                Text(pomodoroManager.isStopwatchRunning ? "Pause" : "Start")
+                                    .font(.system(size: 10, weight: .bold))
+                            }
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4.5)
+                            .background(Capsule().fill(Color.green))
+                        }
+                        .buttonStyle(.plain)
+
+                        Button(action: { pomodoroManager.recordLap() }) {
+                            HStack(spacing: 3) {
+                                Image(systemName: "flag.fill")
+                                    .font(.system(size: 8.5))
+                                Text("Lap")
+                                    .font(.system(size: 9.5, weight: .bold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 9)
+                            .padding(.vertical, 4.5)
+                            .background(Capsule().fill(Color.white.opacity(0.15)))
+                        }
+                        .buttonStyle(.plain)
+
+                        Button(action: { pomodoroManager.resetStopwatch() }) {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 9.5, weight: .bold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .padding(5)
+                                .background(Circle().fill(Color.white.opacity(0.12)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.top, 2)
+                }
+            }
+            .frame(width: 130, height: 130)
+
+            // Lap Times History List
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("LAP SPLITS")
+                        .font(.system(size: 8.5, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.5))
+                    Spacer()
+                    Text("\(pomodoroManager.stopwatchLaps.count) Recorded")
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundColor(.green)
+                }
+
+                if pomodoroManager.stopwatchLaps.isEmpty {
+                    VStack(spacing: 4) {
+                        Spacer()
+                        Image(systemName: "flag.circle")
+                            .font(.system(size: 20))
+                            .foregroundColor(.white.opacity(0.25))
+                        Text("Tap 'Lap' while running to capture split times")
+                            .font(.system(size: 9.5))
+                            .foregroundColor(.white.opacity(0.45))
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        VStack(spacing: 4) {
+                            ForEach(pomodoroManager.stopwatchLaps) { lap in
+                                HStack {
+                                    Text("Lap \(lap.lapNumber)")
+                                        .font(.system(size: 9.5, weight: .bold, design: .monospaced))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                    Text("+\(lap.formattedLapTime)")
+                                        .font(.system(size: 9.5, weight: .semibold, design: .monospaced))
+                                        .foregroundColor(.green)
+                                    Spacer()
+                                    Text(lap.formattedTotalTime)
+                                        .font(.system(size: 9.5, weight: .medium, design: .monospaced))
+                                        .foregroundColor(.white.opacity(0.7))
+                                }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3.5)
+                                .background(RoundedRectangle(cornerRadius: 6).fill(Color.white.opacity(0.06)))
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(8)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
+        }
+    }
+
+    @ViewBuilder
+    private var caffeineCardView: some View {
+        VStack(alignment: .leading, spacing: 11) {
+            // Header Row
+            HStack {
+                Image(systemName: "cup.and.saucer.fill")
+                    .foregroundColor(.orange)
+                    .font(.system(size: 13, weight: .bold))
+                Text("Mac Caffeine Keep Awake")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(.white)
+                Spacer()
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(caffeineManager.isCaffeineActive ? Color.green : Color.gray.opacity(0.5))
+                        .frame(width: 6, height: 6)
+                    Text(caffeineManager.isCaffeineActive ? "☕ Active" : "😴 Sleep Allowed")
+                        .font(.system(size: 9.5, weight: .bold))
+                        .foregroundColor(caffeineManager.isCaffeineActive ? .orange : .white.opacity(0.5))
+                }
+                .padding(.horizontal, 7)
+                .padding(.vertical, 3)
+                .background(Capsule().fill(caffeineManager.isCaffeineActive ? Color.orange.opacity(0.2) : Color.white.opacity(0.08)))
+            }
+
+            // Hero Status Card
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(caffeineManager.isCaffeineActive ? Color.orange.opacity(0.2) : Color.white.opacity(0.08))
+                        .frame(width: 40, height: 40)
+                    Image(systemName: caffeineManager.isCaffeineActive ? "bolt.fill" : "moon.zzz.fill")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(caffeineManager.isCaffeineActive ? .orange : .white.opacity(0.6))
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(caffeineManager.isCaffeineActive ? "Sleep Prevention Active" : "Normal Power Management")
+                        .font(.system(size: 11.5, weight: .bold))
+                        .foregroundColor(.white)
+                    Text(caffeineManager.formattedRemainingTime)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(caffeineManager.isCaffeineActive ? .orange : .white.opacity(0.6))
+                }
+                Spacer()
+            }
+            .padding(10)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
+
+            // Duration Presets Section
             VStack(alignment: .leading, spacing: 6) {
                 Text("KEEP AWAKE DURATION")
                     .font(.system(size: 8.5, weight: .bold, design: .monospaced))
                     .foregroundColor(.white.opacity(0.5))
 
-                HStack(spacing: 6) {
-                    Button(action: { caffeineManager.enableCaffeine(durationMinutes: 15) }) {
-                        Text("15m")
-                            .font(.system(size: 9.5, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 5)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(caffeineManager.selectedDurationMinutes == 15 ? Color.orange : Color.white.opacity(0.08)))
-                    }.buttonStyle(.plain)
+                HStack(spacing: 5) {
+                    ForEach([15, 30, 45, 60], id: \.self) { mins in
+                        Button(action: { caffeineManager.enableCaffeine(durationMinutes: mins) }) {
+                            Text(mins >= 60 ? "1 Hr" : "\(mins)m")
+                                .font(.system(size: 9.5, weight: caffeineManager.selectedDurationMinutes == mins ? .bold : .medium))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 5)
+                                .background(RoundedRectangle(cornerRadius: 8).fill(caffeineManager.selectedDurationMinutes == mins ? Color.orange : Color.white.opacity(0.08)))
+                        }
+                        .buttonStyle(.plain)
+                    }
 
-                    Button(action: { caffeineManager.enableCaffeine(durationMinutes: 30) }) {
-                        Text("30m")
-                            .font(.system(size: 9.5, weight: .bold))
+                    Button(action: { caffeineManager.enableCaffeine(durationMinutes: 120) }) {
+                        Text("2 Hr")
+                            .font(.system(size: 9.5, weight: caffeineManager.selectedDurationMinutes == 120 ? .bold : .medium))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 5)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(caffeineManager.selectedDurationMinutes == 30 ? Color.orange : Color.white.opacity(0.08)))
-                    }.buttonStyle(.plain)
-
-                    Button(action: { caffeineManager.enableCaffeine(durationMinutes: 60) }) {
-                        Text("1 Hr")
-                            .font(.system(size: 9.5, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 5)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(caffeineManager.selectedDurationMinutes == 60 ? Color.orange : Color.white.opacity(0.08)))
-                    }.buttonStyle(.plain)
+                            .background(RoundedRectangle(cornerRadius: 8).fill(caffeineManager.selectedDurationMinutes == 120 ? Color.orange : Color.white.opacity(0.08)))
+                    }
+                    .buttonStyle(.plain)
 
                     Button(action: { caffeineManager.enableCaffeine(durationMinutes: nil) }) {
                         Text("∞")
@@ -1413,7 +1750,8 @@ struct MaximizedTheaterDashboardView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 4)
                             .background(RoundedRectangle(cornerRadius: 8).fill(caffeineManager.isCaffeineActive && caffeineManager.selectedDurationMinutes == nil ? Color.orange : Color.white.opacity(0.08)))
-                    }.buttonStyle(.plain)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
 
@@ -1437,7 +1775,7 @@ struct MaximizedTheaterDashboardView: View {
                     Image(systemName: "terminal.fill")
                         .font(.system(size: 10))
                         .foregroundColor(.cyan)
-                    Text("Prevent System Idle Sleep")
+                    Text("Prevent System Idle & Disk Sleep")
                         .font(.system(size: 9.5, weight: .medium))
                         .foregroundColor(.white)
                     Spacer()
@@ -1446,14 +1784,14 @@ struct MaximizedTheaterDashboardView: View {
                         .foregroundColor(.green)
                 }
             }
-            .padding(8)
+            .padding(9)
             .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.06)))
 
-            Spacer()
+            Spacer(minLength: 0)
 
-            // Toggle Button
+            // Master Toggle Button
             Button(action: { caffeineManager.toggleCaffeine() }) {
-                HStack {
+                HStack(spacing: 6) {
                     Spacer()
                     Image(systemName: caffeineManager.isCaffeineActive ? "stop.fill" : "cup.and.saucer.fill")
                     Text(caffeineManager.isCaffeineActive ? "Turn Off Caffeine" : "Enable Caffeine (Keep Awake)")
