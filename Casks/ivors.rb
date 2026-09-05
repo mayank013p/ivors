@@ -23,8 +23,7 @@ cask "ivors" do
                    sudo: false
   end
 
-  uninstall quit: "com.mayank.ivors",
-            delete: "#{appdir}/Ivors.app"
+  uninstall quit: "com.mayank.ivors"
 
   zap trash: [
     "~/Library/Preferences/com.mayank.ivors.plist",
