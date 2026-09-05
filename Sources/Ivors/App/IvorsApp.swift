@@ -148,4 +148,10 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func quitApp() {
         NSApplication.shared.terminate(nil)
     }
+
+    public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        WindowManager.shared.toggleIslandState()
+        openPreferences()
+        return true
+    }
 }

@@ -1,6 +1,6 @@
 cask "ivors" do
   version "1.4.0"
-  sha256 "00fd0a74c7a1105d5d063cc2ce1e02d696e68a425f56419e6a9f22c105510b25"
+  sha256 "eec7b657a4660550a854db0db82b53d3ab28c10b1cca0092225c84d8af31dd06"
 
   url "https://raw.githubusercontent.com/mayank013p/ivors/main/Ivors-macOS.zip"
   name "Ivors"
