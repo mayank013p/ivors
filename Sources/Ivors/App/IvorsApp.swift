@@ -117,6 +117,12 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(NSMenuItem.separator())
 
+        let uninstallItem = NSMenuItem(title: "Uninstall Ivors...", action: #selector(confirmAndUninstall), keyEquivalent: "")
+        uninstallItem.target = self
+        menu.addItem(uninstallItem)
+
+        menu.addItem(NSMenuItem.separator())
+
         let quitItem = NSMenuItem(title: "Quit Ivors", action: #selector(quitApp), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
@@ -126,6 +132,25 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func toggleIsland() {
         WindowManager.shared.toggleIslandState()
+    }
+
+    @objc private func confirmAndUninstall() {
+        let alert = NSAlert()
+        alert.messageText = "Uninstall Ivors?"
+        alert.informativeText = "This will quit Ivors and remove all application files and preferences from your Mac."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Uninstall & Quit")
+        alert.addButton(withTitle: "Cancel")
+
+        NSApp.activate(ignoringOtherApps: true)
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            let task = Process()
+            task.executableURL = URL(fileURLWithPath: "/bin/bash")
+            task.arguments = ["-c", "sleep 0.5; killall Ivors 2>/dev/null; brew uninstall --cask ivors 2>/dev/null; rm -rf /Applications/Ivors.app ~/Library/Preferences/com.mayank.ivors.plist ~/Library/Application\\ Support/Ivors"]
+            try? task.run()
+            NSApplication.shared.terminate(nil)
+        }
     }
 
     @objc private func openPreferences() {

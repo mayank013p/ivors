@@ -240,6 +240,8 @@ struct AccountSettingsTab: View {
 }
 
 struct AboutSettingsTab: View {
+    @State private var showUninstallConfirm: Bool = false
+
     var body: some View {
         VStack(spacing: 12) {
             ZStack {
@@ -253,7 +255,7 @@ struct AboutSettingsTab: View {
 
             Text("Ivors Dynamic Island")
                 .font(.system(size: 18, weight: .bold))
-            Text("Version 1.0.0 (Native Swift & SwiftUI)")
+            Text("Version 1.4.0 (Native Swift & SwiftUI)")
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
 
@@ -262,6 +264,33 @@ struct AboutSettingsTab: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
+
+            Divider()
+                .padding(.vertical, 4)
+
+            Button(role: .destructive, action: {
+                showUninstallConfirm = true
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "trash.fill")
+                    Text("Quit & Clean Uninstall Ivors...")
+                }
+                .font(.system(size: 11, weight: .medium))
+            }
+            .buttonStyle(.bordered)
+            .tint(.red)
+            .confirmationDialog("Are you sure you want to completely uninstall Ivors?", isPresented: $showUninstallConfirm, titleVisibility: .visible) {
+                Button("Uninstall & Remove Everything", role: .destructive) {
+                    let task = Process()
+                    task.executableURL = URL(fileURLWithPath: "/bin/bash")
+                    task.arguments = ["-c", "sleep 0.5; killall Ivors 2>/dev/null; brew uninstall --cask ivors 2>/dev/null; rm -rf /Applications/Ivors.app ~/Library/Preferences/com.mayank.ivors.plist ~/Library/Application\\ Support/Ivors"]
+                    try? task.run()
+                    NSApplication.shared.terminate(nil)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This will close Ivors and remove the application files and settings from your Mac.")
+            }
         }
         .padding()
     }
