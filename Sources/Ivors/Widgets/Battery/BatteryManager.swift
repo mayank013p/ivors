@@ -22,27 +22,38 @@ public final class BatteryManager: ObservableObject {
             return
         }
 
+        var selectedDescription: [String: Any]? = nil
         for source in sources {
-            guard let description = IOPSGetPowerSourceDescription(snapshot, source)?.takeUnretainedValue() as? [String: Any] else {
-                continue
+            if let description = IOPSGetPowerSourceDescription(snapshot, source)?.takeUnretainedValue() as? [String: Any] {
+                if let type = description[kIOPSTypeKey] as? String, type == kIOPSInternalBatteryType {
+                    selectedDescription = description
+                    break
+                }
+                if selectedDescription == nil {
+                    selectedDescription = description
+                }
             }
+        }
 
-            if let current = description[kIOPSCurrentCapacityKey] as? Int,
-               let max = description[kIOPSMaxCapacityKey] as? Int {
-                let percentage = Int((Double(current) / Double(max)) * 100)
-                let state = description[kIOPSPowerSourceStateKey] as? String
-                let isChargingState = description[kIOPSIsChargingKey] as? Bool ?? false
-                let powerSourceState = (state == kIOPSACPowerValue) || isChargingState
+        guard let description = selectedDescription else { return }
 
-                DispatchQueue.main.async {
-                    let stateChanged = (self.isCharging != powerSourceState) || (self.batteryLevel != percentage)
-                    self.batteryLevel = percentage
-                    self.isCharging = powerSourceState
-                    self.isLowBattery = percentage <= 20 && !powerSourceState
+        if let current = description[kIOPSCurrentCapacityKey] as? Int,
+           let max = description[kIOPSMaxCapacityKey] as? Int, max > 0 {
+            let percentage = Int((Double(current) / Double(max)) * 100)
+            let state = description[kIOPSPowerSourceStateKey] as? String
+            let isChargingState = description[kIOPSIsChargingKey] as? Bool ?? false
+            let powerSourceState = (state == kIOPSACPowerValue) || isChargingState
 
-                    if stateChanged {
-                        EventBus.shared.post(.batteryStateChanged(level: percentage, isCharging: powerSourceState))
-                    }
+            DispatchQueue.main.async {
+                let chargingChanged = (self.isCharging != powerSourceState)
+                let levelChanged = (self.batteryLevel != percentage)
+
+                self.batteryLevel = percentage
+                self.isCharging = powerSourceState
+                self.isLowBattery = percentage <= 20 && !powerSourceState
+
+                if chargingChanged || levelChanged {
+                    EventBus.shared.post(.batteryStateChanged(level: percentage, isCharging: powerSourceState))
                 }
             }
         }

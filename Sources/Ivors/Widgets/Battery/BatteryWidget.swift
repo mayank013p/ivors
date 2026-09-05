@@ -32,6 +32,9 @@ public final class BatteryWidget: DynamicIslandWidget, ObservableObject {
     private var previousWiFiState: Bool? = nil
 
     public init() {
+        self.previousChargingState = BatteryManager.shared.isCharging
+        self.previousBatteryLevel = BatteryManager.shared.batteryLevel
+        self.isInitialCheck = false
         setupEventBusObserver()
     }
 
@@ -53,6 +56,7 @@ public final class BatteryWidget: DynamicIslandWidget, ObservableObject {
             self.timer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
                 withAnimation(AnimationController.defaultSpring) {
                     self?.isShowingPopup = false
+                    self?.currentNotification = nil
                 }
             }
         }
@@ -106,7 +110,7 @@ public final class BatteryWidget: DynamicIslandWidget, ObservableObject {
                         return
                     }
 
-                    if isCharging && self.previousChargingState != true {
+                    if isCharging && self.previousChargingState == false {
                         self.showNotification(
                             title: "Power Adapter Connected",
                             message: "Charging at \(level)%",

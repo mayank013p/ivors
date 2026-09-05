@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivors Support & Help Center</title>
+    <meta name="description" content="Support and help documentation for Ivors Dynamic Island for macOS. FAQs, setup instructions, permissions, and troubleshooting.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #07070b;
+            --card-bg: rgba(255, 255, 255, 0.035);
+            --card-hover-bg: rgba(255, 255, 255, 0.055);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-orange: #ff9500;
+            --accent-cyan: #00d2ff;
+            --accent-green: #30d158;
+            --text-main: #f5f5f7;
+            --text-sub: #9898a6;
+            --text-dim: #60606d;
+            --font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 24px 80px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .ambient-glow {
+            position: fixed;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(255, 149, 0, 0.12) 0%, rgba(0, 210, 255, 0.05) 50%, transparent 75%);
+            filter: blur(100px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 860px;
+            width: 100%;
+        }
+
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 48px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #30d158;
+            box-shadow: 0 0 10px #30d158;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+            background: linear-gradient(180deg, #ffffff 20%, #b0b0bc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: var(--text-sub);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .section-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .section-box h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 16px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .faq-item:first-child {
+            padding-top: 0;
+        }
+
+        .faq-question {
+            font-size: 1.02rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .faq-answer {
+            font-size: 0.92rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        .faq-answer code {
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #f1f1f5;
+            font-size: 0.85em;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.85rem;
+            color: #c9c9d6;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .support-cta-box {
+            text-align: center;
+            padding: 36px 24px;
+            margin-top: 40px;
+            border-radius: 20px;
+            background: radial-gradient(circle at center, rgba(255, 149, 0, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 149, 0, 0.25);
+        }
+
+        .support-cta-box h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .support-cta-box p {
+            font-size: 0.94rem;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+        }
+
+        .btn-issue {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            color: #000000;
+            padding: 12px 24px;
+            border-radius: 99px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-issue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+    <div class="container">
+        <header class="nav-header">
+            <a href="index.html" class="brand-link">
+                <span class="brand-dot"></span>
+                <span>Ivors Dynamic Island</span>
+            </a>
+            <div class="nav-actions">
+                <a href="index.html" class="nav-btn">← Back to Home</a>
+                <a href="https://github.com/mayank013p/ivors" target="_blank" rel="noopener noreferrer" class="nav-btn">GitHub</a>
+            </div>
+        </header>
+
+        <h1 class="hero-title">Support & Documentation</h1>
+        <p class="hero-sub">
+            Everything you need to know about setting up, configuring, and troubleshooting Ivors on macOS Sonoma & Sequoia.
+        </p>
+
+        <!-- Quick Install & Updates -->
+        <section class="section-box">
+            <h2>⚡ Quick Install & Updates</h2>
+            <div class="faq-item">
+                <div class="faq-question">How do I install or update via Homebrew?</div>
+                <div class="faq-answer">
+                    To install Ivors with Homebrew Cask:
+                    <div class="code-block">brew tap mayank013p/ivors https://github.com/mayank013p/ivors && brew install --cask ivors</div>
+                    To update to the latest release:
+                    <div class="code-block">brew upgrade --cask ivors</div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do I install via direct 1-line Terminal command?</div>
+                <div class="faq-answer">
+                    Run this command in Terminal to download, strip quarantine attributes, and launch Ivors instantly:
+                    <div class="code-block">curl -fsSL https://raw.githubusercontent.com/mayank013p/ivors/main/install.sh | bash</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Permissions & Privacy -->
+        <section class="section-box">
+            <h2>🛡️ macOS Permissions & Privacy</h2>
+            <div class="faq-item">
+                <div class="faq-question">Why does Ivors request macOS permissions?</div>
+                <div class="faq-answer">
+                    Ivors uses native macOS APIs to power its widgets:
+                    <br><br>
+                    • <strong>Bluetooth:</strong> To read battery percentage and connection status for AirPods and wireless gear.<br>
+                    • <strong>Automation / Apple Events:</strong> To control Spotify and Apple Music playback from the notch.<br>
+                    • <strong>Microphone:</strong> To display the live privacy indicator and 1-click mute widget (Ivors never records or transmits audio).<br>
+                    • <strong>Accessibility:</strong> To support the global shortcut (<code>⌥ Option + Space</code>) and trackpad gestures.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How to grant or reset permissions?</div>
+                <div class="faq-answer">
+                    Open <strong>System Settings → Privacy & Security</strong>, and verify that <strong>Ivors</strong> is checked under <em>Accessibility</em>, <em>Bluetooth</em>, and <em>Automation</em>.
+                </div>
+            </div>
+        </section>
+
+        <!-- Shortcuts & Controls -->
+        <section class="section-box">
+            <h2>🎮 Controls & Keyboard Shortcuts</h2>
+            <div class="faq-item">
+                <div class="faq-question">What are the default shortcuts?</div>
+                <div class="faq-answer">
+                    • <code>⌥ Option + Space</code> : Toggle Dynamic Island expansion<br>
+                    • <strong>Hover on Notch</strong> : Smoothly expands the island HUD<br>
+                    • <strong>Two-Finger Horizontal Swipe</strong> : Switch between widgets<br>
+                    • <strong>Drag & Drop File</strong> : Drop any file onto the notch to stash it<br>
+                    • <code>ESC</code> : Collapse expanded island
+                </div>
+            </div>
+        </section>
+
+        <!-- Troubleshooting & Uninstallation -->
+        <section class="section-box">
+            <h2>🗑️ Clean Uninstallation</h2>
+            <div class="faq-item">
+                <div class="faq-question">How do I cleanly uninstall Ivors?</div>
+                <div class="faq-answer">
+                    <strong>Method 1: In-App Clean Uninstaller</strong><br>
+                    Click the ✦ sparkles icon in your Menu Bar → <em>Preferences</em> → <em>About</em> tab → Click <strong>"Uninstall Ivors..."</strong>.<br><br>
+                    <strong>Method 2: Homebrew</strong><br>
+                    <div class="code-block">brew uninstall --cask ivors</div>
+                    <strong>Method 3: Terminal Command</strong><br>
+                    <div class="code-block">curl -fsSL https://raw.githubusercontent.com/mayank013p/ivors/main/scripts/uninstall.sh | bash</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community & Help -->
+        <div class="support-cta-box">
+            <h3>Still Need Help or Found a Bug?</h3>
+            <p>Ivors is 100% free and open-source. Report issues or request features directly on GitHub.</p>
+            <a href="https://github.com/mayank013p/ivors/issues" target="_blank" rel="noopener noreferrer" class="btn-issue">
+                Open a GitHub Issue
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -149,9 +149,6 @@ public final class WidgetManager: ObservableObject {
                 case .mediaStateChanged:
                     self?.sortAndEvaluateActiveWidget()
 
-                case .batteryStateChanged, .bluetoothDeviceConnected, .customNotification:
-                    self?.triggerTemporaryPopup(widgetId: "battery", duration: 3.0)
-
                 default:
                     break
                 }

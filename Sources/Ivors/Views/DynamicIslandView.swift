@@ -129,6 +129,7 @@ public struct DynamicIslandView: View {
                         }
 
                         if let batteryWidget = widgetManager.registeredWidgets.first(where: { $0.id == "battery" }) as? BatteryWidget,
+                           batteryWidget.isShowingPopup,
                            let note = batteryWidget.currentNotification {
                             HStack(spacing: 12) {
                                 if let art = note.artwork {
