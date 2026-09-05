@@ -36,7 +36,11 @@ cat <<EOF > "$APP_DIR/Contents/Info.plist"
     <string>Ivors</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
     <key>CFBundleShortVersionString</key>
+    <string>1.4.0</string>
+    <key>CFBundleVersion</key>
     <string>1.4.0</string>
     <key>LSUIElement</key>
     <true/>
@@ -44,6 +48,22 @@ cat <<EOF > "$APP_DIR/Contents/Info.plist"
     <true/>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Ivors uses Bluetooth to detect connected peripherals, AirPods battery status, and device connectivity.</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>Ivors uses Bluetooth to display battery and connection status for peripherals.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Ivors monitors microphone activity for the privacy indicator and mute widget.</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Ivors uses AppleEvents to interact with Music, Spotify, and system controls.</string>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>Ivors displays currently playing track details and album artwork.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>Ivors displays upcoming calendar events in the Dynamic Island.</string>
+    <key>NSRemindersUsageDescription</key>
+    <string>Ivors displays reminder tasks and notifications.</string>
+    <key>NSSystemAdministrationUsageDescription</key>
+    <string>Ivors requires system administration access for sleep prevention.</string>
 </dict>
 </plist>
 EOF
