@@ -2,7 +2,9 @@ import Cocoa
 import CoreGraphics
 
 func generateAppIcon() {
-    let logoPath = "/Users/mayank/Documents/ivors-website/public/ivors_logo.png"
+    let scriptURL = URL(fileURLWithPath: #filePath)
+    let repoRoot = scriptURL.deletingLastPathComponent().deletingLastPathComponent()
+    let logoPath = repoRoot.appendingPathComponent("public/ivors_logo.png").path
     guard let sourceImage = NSImage(contentsOfFile: logoPath) else {
         print("❌ Could not load logo image at \(logoPath)")
         exit(1)
@@ -66,7 +68,7 @@ func generateAppIcon() {
     }
 
     // Convert iconset to ICNS using iconutil
-    let outputPath = "/Users/mayank/Documents/Ivors/AppIcon.icns"
+    let outputPath = repoRoot.appendingPathComponent("AppIcon.icns").path
     let task = Process()
     task.executableURL = URL(fileURLWithPath: "/usr/bin/iconutil")
     task.arguments = ["-c", "icns", iconsetDir, "-o", outputPath]

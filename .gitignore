@@ -1,9 +1,39 @@
+# Swift & Build Outputs
 .build/
-node_modules/
-.DS_Store
 *.xcodeproj
 *.xcworkspace
-*.dmg
+*.xcuserdata/
 *.app/
+*.dmg
+!Ivors-v1.4.0.dmg
+!public/downloads/*.dmg
+
+# Node & Package Managers
+node_modules/
+package-lock.json
+
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Secrets, Credentials & Environment Files
+.env
+.env.*
+*.pem
+*.p8
+*.p12
+*.cer
+*.key
+*.secret
+*.credentials
 service-account.json
 GoogleService-Info.plist
+
+# Scratch and Temporary
+/tmp/
+*.tmp
+*.log

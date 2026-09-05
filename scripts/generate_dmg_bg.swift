@@ -86,7 +86,9 @@ func generateDMGBackground() {
     let rep = NSBitmapImageRep(cgImage: finalCGImage)
     guard let pngData = rep.representation(using: .png, properties: [:]) else { exit(1) }
 
-    let outPath = "/Users/mayank/Documents/Ivors/scripts/dmg_background.png"
+    let scriptURL = URL(fileURLWithPath: #filePath)
+    let repoRoot = scriptURL.deletingLastPathComponent().deletingLastPathComponent()
+    let outPath = repoRoot.appendingPathComponent("scripts/dmg_background.png").path
     try? pngData.write(to: URL(fileURLWithPath: outPath))
     print("✅ Created DMG background graphic at \(outPath)")
 }

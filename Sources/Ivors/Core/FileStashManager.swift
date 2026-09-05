@@ -30,11 +30,7 @@ public final class FileStashManager: ObservableObject {
     @Published public var statusMessage: String = "Ready for drag-and-drop file stash"
 
     private init() {
-        // Add sample workspace files if present
-        let sampleURL = URL(fileURLWithPath: "/Users/mayank/Documents/Ivors/README.md")
-        if FileManager.default.fileExists(atPath: sampleURL.path) {
-            stashedFiles.append(StashedFile(url: sampleURL))
-        }
+        // Shelf initializes cleanly
     }
 
     public func addFile(url: URL) {
@@ -101,7 +97,9 @@ public final class FileStashManager: ObservableObject {
             return
         }
 
-        let zipPath = "/Users/mayank/Documents/Ivors/Stashed_Files.zip"
+        let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: NSTemporaryDirectory())
+        let zipURL = downloadsURL.appendingPathComponent("Stashed_Files.zip")
+        let zipPath = zipURL.path
         let filePaths = stashedFiles.map { $0.url.path }
 
         DispatchQueue.global(qos: .userInitiated).async {
