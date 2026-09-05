@@ -8,8 +8,8 @@ cask "ivors" do
   homepage "https://github.com/mayank013p/ivors"
 
   preflight do
-    # Kill any running instance before installing
-    system_command "/usr/bin/killall", args: ["Ivors"], sudo: false, print_stderr: false
+    # Kill running instance if present (must_succeed: false prevents error if not running)
+    system_command "/usr/bin/pkill", args: ["-f", "Ivors.app"], sudo: false, must_succeed: false
     # Remove existing /Applications/Ivors.app if present to prevent collision errors
     target_app = "#{appdir}/Ivors.app"
     FileUtils.rm_rf(target_app) if File.exist?(target_app)
